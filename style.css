@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+#input-section {
+    margin: 20px 0;
+    padding: 15px;
+    background: white;
+    border-radius: 5px;
+}
+
+input {
+    margin: 5px;
+    padding: 8px;
+    width: 300px;
+}
+
+button {
+    padding: 10px 20px;
+    margin: 10px 0;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+/*
+Ключ:
+0JrQu9GO0YcgMTogcGFzdGViaW4uY29tL3Jhdy8g
+
+Подсказка:
+0KHQu9C10LTRg9GO0YnRg9GOINC/0L7QtNGB0LrQsNC30LrRgyDQuNGJ0Lgg0LIg0LLQtdGC0LrQtSBmZWF0dXJlL2pz
+*/
