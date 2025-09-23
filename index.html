@@ -2,21 +2,44 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Квест: Поиск секретного сообщения</title>
+    <title>Квест: Двухэтапный декодер</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>Декодер секретного сообщения</h1>
+<h1>Двухэтапный декодер секретного сообщения</h1>
 
 <div id="input-section">
-    <label>Ключ 1: <input type="text" id="key1" placeholder="Найди в CSS"></label>
+    <h3>Этап 1: Введите найденные ключи в Base64</h3>
+
+    <label>Ключ 1 из CSS:
+        <input type="text" id="key1" placeholder="Введите Base64 ключ 1" size="60">
+    </label>
     <br>
-    <label>Ключ 2: <input type="text" id="key2" placeholder="Найди в JS"></label>
+
+    <label>Ключ 2 из JS:
+        <input type="text" id="key2" placeholder="Введите Base64 ключ 2" size="60">
+    </label>
     <br>
-    <button onclick="decodeMessage()">Расшифровать сообщение</button>
+
+    <button onclick="decodeKeys()">Расшифровать ключи и показать URL</button>
+
+    <div id="keys-result" style="margin-top: 15px;"></div>
 </div>
 
-<div id="output"></div>
+<div id="final-section" style="display: none; margin-top: 30px;">
+    <h3>Этап 2: Введите финальное сообщение в Base64</h3>
+    <p>Перейди по URL выше, скопируй Base64 сообщение и вставь сюда:</p>
+
+    <label>Финальное сообщение в Base64:
+        <textarea id="finalMessage" placeholder="Вставь сюда Base64 из Pastebin"
+                  rows="4" cols="60"></textarea>
+    </label>
+    <br>
+
+    <button onclick="decodeFinalMessage()">Расшифровать финальное сообщение</button>
+
+    <div id="final-result" style="margin-top: 15px;"></div>
+</div>
 
 <script src="script.js"></script>
 
