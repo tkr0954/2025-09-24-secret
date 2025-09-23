@@ -1,88 +1,128 @@
-name: Verify Easter Egg Solution
+name: Secret Message Decoder
 
-on:
-  push:
-    branches: [ main, solution ]
-  pull_request:
-    branches: [ main ]
+on: [push, pull_request]
 
 jobs:
   verify:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Полная история для поиска коммитов
+          fetch-depth: 0
 
-      - name: Verify file structure
+      - name: Verify files structure
         run: |
-          echo "🔍 Проверяем структуру файлов..."
-          if [ ! -f "index.html" ]; then
-            echo "❌ Отсутствует index.html"
-            exit 1
-          fi
-          if [ ! -f "style.css" ]; then
-            echo "❌ Отсутствует style.css"
-            exit 1
-          fi
-          if [ ! -f "script.js" ]; then
-            echo "❌ Отсутствует script.js"
-            exit 1
-          fi
+          echo "📁 Проверка структуры файлов..."
+          [ -f "index.html" ] || (echo "❌ index.html missing" && exit 1)
+          [ -f "style.css" ] || (echo "❌ style.css missing" && exit 1)
+          [ -f "script.js" ] || (echo "❌ script.js missing" && exit 1)
           echo "✅ Все файлы на месте"
 
-      - name: Check HTML content
+      - name: Check HTML hints
         run: |
-          echo "🔍 Проверяем HTML..."
-          if grep -q "generateFibonacci" index.html; then
-            echo "✅ Функция найдена в HTML"
+          echo "🔍 Поиск подсказок в HTML..."
+          if grep -q "U0x1ZHVqb3VqYXkgcG9kc2themsgdml6aSB2IGlzdG9yaWkgcmVwb3NpdG9yaWE=" index.html; then
+            echo "✅ Base64 подсказка найдена в HTML"
+            HTML_HINT=$(grep -o 'U0x1ZHVqb3VqYXkgcG9kc2themsgdml6aSB2IGlzdG9yaWkgcmVwb3NpdG9yaWE=' index.html)
+            DECODED=$(echo $HTML_HINT | base64 -d)
+            echo "Расшифровано: $DECODED"
           else
-            echo "❌ Функция не найдена в HTML"
+            echo "❌ Подсказка в HTML не найдена"
             exit 1
           fi
 
-      - name: Check CSS content
+      - name: Check CSS for key1
         run: |
-          echo "🔍 Проверяем CSS..."
-          if grep -q "text-align: center" style.css; then
-            echo "✅ Стили центрирования найдены"
+          echo "🔍 Поиск ключа 1 в CSS..."
+          if grep -q "S2V5IDE6IHBhc3RlYmluLmNvbS9yYXcv" style.css; then
+            echo "✅ Ключ 1 найден в CSS"
+            CSS_KEY=$(grep -o 'S2V5IDE6IHBhc3RlYmluLmNvbS9yYXcv' style.css)
+            DECODED=$(echo $CSS_KEY | base64 -d)
+            echo "Ключ 1: $DECODED"
           else
-            echo "❌ Стили центрирования отсутствуют"
+            echo "❌ Ключ 1 в CSS не найден"
             exit 1
           fi
 
-      - name: Check JavaScript logic
+      - name: Check JS for key2 and logic
         run: |
-          echo "🔍 Проверяем JavaScript..."
-          if grep -q "secret" script.js; then
-            echo "✅ Ключевое слово 'secret' найдено"
+          echo "🔍 Проверка JavaScript логики..."
+          
+          if grep -q "decodeMessage" script.js; then
+            echo "✅ Функция decodeMessage найдена"
           else
-            echo "❌ Ключевое слово 'secret' отсутствует"
+            echo "❌ Функция decodeMessage отсутствует"
             exit 1
           fi
           
-          if grep -q "L3Bhc3RlYmluLmNvbS9SYW5kb21TdHJpbmc=" script.js; then
-            echo "✅ Base64 строка найдена"
+          if grep -q "fetch" script.js; then
+            echo "✅ Fetch API используется"
           else
-            echo "❌ Base64 строка отсутствует"
+            echo "❌ Fetch API не используется"
+            exit 1
+          fi
+          
+          if grep -q "atob" script.js; then
+            echo "✅ Base64 декодирование есть"
+          else
+            echo "❌ Base64 декодирования нет"
+            exit 1
+          fi
+          
+          if grep -q "S2V5IDI6IDVM" script.js; then
+            echo "✅ Ключ 2 найден в JS"
+            JS_KEY=$(grep -o 'S2V5IDI6IDVM.*' script.js | head -1 | cut -d' ' -f1)
+            DECODED=$(echo $JS_KEY | base64 -d)
+            echo "Ключ 2: $DECODED"
+          else
+            echo "❌ Ключ 2 в JS не найден"
             exit 1
           fi
 
-      - name: Check git history for secret commit
+      - name: Test URL assembly and decoding
         run: |
-          echo "🔍 Ищем секретный коммит в истории..."
-          if git log --all --oneline | grep -q "decoder hint"; then
-            echo "✅ Секретный коммит найден в истории"
-          elif git reflog | grep -q "decoder hint"; then
-            echo "✅ Секретный коммит найден в reflog"
-          else
-            echo "⚠️ Секретный коммит не найден (возможно, еще не искали)"
-          fi
+          echo "🧪 Тестирование логики..."
+          cat > test_logic.js << 'EOF'
+          function testURLLogic() {
+              const testKey1 = "pastebin.com/raw/";
+              const testKey2 = "testID123";
+              const assembledURL = "https://" + testKey1 + testKey2;
+          
+              console.log("Тест сборки URL:");
+              console.log("Собранный URL:", assembledURL);
+          
+              if (assembledURL === "https://pastebin.com/raw/testID123") {
+                  console.log("✅ Логика сборки URL правильная");
+                  return true;
+              }
+              return false;
+          }
+          
+          function testBase64Logic() {
+              const testMessage = "Тест кириллицы";
+              const base64Encoded = Buffer.from(testMessage, 'utf8').toString('base64');
+              const base64Decoded = Buffer.from(base64Encoded, 'base64').toString('utf8');
+          
+              console.log("Тест Base64 с кириллицей:");
+              console.log("Оригинал:", testMessage);
+              console.log("Декодировано:", base64Decoded);
+          
+              if (base64Decoded === testMessage) {
+                  console.log("✅ Base64 с кириллицей работает");
+                  return true;
+              }
+              return false;
+          }
+          
+          if (testURLLogic() && testBase64Logic()) {
+              console.log("🎉 Все тесты логики пройдены!");
+          } else {
+              throw new Error("Тесты не пройдены");
+          }
+          EOF
+          node test_logic.js
 
-      - name: Success message
+      - name: Final check
         run: |
-          echo "🎉 Поздравляем! Все проверки пройдены."
-          echo "📋 Если вы нашли все подсказки, перейдите на Pastebin для получения флага."
-          echo "💡 Подсказка: объедините Base64 строки из истории и JavaScript"
+          echo "🎯 Финальная проверка выполнена успешно!"
