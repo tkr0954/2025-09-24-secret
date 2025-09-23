@@ -1,0 +1,88 @@
+name: Verify Easter Egg Solution
+
+on:
+  push:
+    branches: [ main, solution ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Полная история для поиска коммитов
+
+      - name: Verify file structure
+        run: |
+          echo "🔍 Проверяем структуру файлов..."
+          if [ ! -f "index.html" ]; then
+            echo "❌ Отсутствует index.html"
+            exit 1
+          fi
+          if [ ! -f "style.css" ]; then
+            echo "❌ Отсутствует style.css"
+            exit 1
+          fi
+          if [ ! -f "script.js" ]; then
+            echo "❌ Отсутствует script.js"
+            exit 1
+          fi
+          echo "✅ Все файлы на месте"
+
+      - name: Check HTML content
+        run: |
+          echo "🔍 Проверяем HTML..."
+          if grep -q "generateFibonacci" index.html; then
+            echo "✅ Функция найдена в HTML"
+          else
+            echo "❌ Функция не найдена в HTML"
+            exit 1
+          fi
+
+      - name: Check CSS content
+        run: |
+          echo "🔍 Проверяем CSS..."
+          if grep -q "text-align: center" style.css; then
+            echo "✅ Стили центрирования найдены"
+          else
+            echo "❌ Стили центрирования отсутствуют"
+            exit 1
+          fi
+
+      - name: Check JavaScript logic
+        run: |
+          echo "🔍 Проверяем JavaScript..."
+          if grep -q "secret" script.js; then
+            echo "✅ Ключевое слово 'secret' найдено"
+          else
+            echo "❌ Ключевое слово 'secret' отсутствует"
+            exit 1
+          fi
+          
+          if grep -q "L3Bhc3RlYmluLmNvbS9SYW5kb21TdHJpbmc=" script.js; then
+            echo "✅ Base64 строка найдена"
+          else
+            echo "❌ Base64 строка отсутствует"
+            exit 1
+          fi
+
+      - name: Check git history for secret commit
+        run: |
+          echo "🔍 Ищем секретный коммит в истории..."
+          if git log --all --oneline | grep -q "decoder hint"; then
+            echo "✅ Секретный коммит найден в истории"
+          elif git reflog | grep -q "decoder hint"; then
+            echo "✅ Секретный коммит найден в reflog"
+          else
+            echo "⚠️ Секретный коммит не найден (возможно, еще не искали)"
+          fi
+
+      - name: Success message
+        run: |
+          echo "🎉 Поздравляем! Все проверки пройдены."
+          echo "📋 Если вы нашли все подсказки, перейдите на Pastebin для получения флага."
+          echo "💡 Подсказка: объедините Base64 строки из истории и JavaScript"
