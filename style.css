@@ -1,0 +1,82 @@
+body {
+    font-family: Arial, sans-serif;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+}
+
+#input-section, #final-section {
+    margin: 20px 0;
+    padding: 20px;
+    background: white;
+    border-radius: 5px;
+    border-left: 4px solid #007cba;
+}
+
+input, textarea {
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-family: monospace;
+    font-size: 14px;
+}
+
+input {
+    width: 500px;
+}
+
+textarea {
+    width: 100%;
+    resize: vertical;
+}
+
+button {
+    padding: 12px 24px;
+    margin: 10px 0;
+    background: #007cba;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+button:hover {
+    background: #005a87;
+}
+
+#keys-result, #final-result {
+    padding: 15px;
+    border-radius: 4px;
+    background: #f8f9fa;
+}
+
+.result-success {
+    border-left: 4px solid #28a745;
+    background: #d4edda !important;
+}
+
+.result-error {
+    border-left: 4px solid #dc3545;
+    background: #f8d7da !important;
+}
+
+.pastebin-link {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.pastebin-link:hover {
+    text-decoration: underline;
+}
+
+/*
+Ключ 1:
+cGFzdGViaW4uY29tL3Jhdy8=
+
+Подсказка:
+0JfQsNC70LXQuSDQstC10YLQutGDIGZlYXR1cmUvanMgINCyIG1haW4g0Lgg0L/QvtC70YPRh9C4INCy0YLQvtGA0L7QuSDQutC70Y7Rhw==
+*/
